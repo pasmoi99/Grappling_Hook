@@ -5,12 +5,16 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     // Start is called before the first frame update
-    private bool _left;
-    private bool _right;
-    private bool _jump;
+    private bool _isMovingLeft;
+    private bool _isMovingRight;
+    private bool _canJump=true;
+    private float _lastPosY;
+    private float _currentPosY;
     private Rigidbody2D _playerRb;
 
-    [SerializeField] private float _speed;
+    [SerializeField] private float _jumpForce;
+    [SerializeField] private float _jumpTimerTrue;
+    [SerializeField] private float _jumpTimerMax;
     [SerializeField] private float _maxSpeed;
     [SerializeField] private float _acceleration;
     void Awake()
@@ -18,53 +22,62 @@ public class Player : MonoBehaviour
         _playerRb = GetComponent<Rigidbody2D>();
     }
 
+    private void Start()
+    {
+        _currentPosY = transform.position.y;
+
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.A))
         {
-            _left = true;
+            _isMovingLeft = true;
         }
         else
         {
-            _left = false;
+            _isMovingLeft = false;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            _right = true;
+            _isMovingRight = true;
         }
         else
         {
-            _right = false;
+            _isMovingRight = false;
         }
-        if (Input.GetKey(KeyCode.Z))
+        if ((Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W)) && _canJump)
         {
-            _jump = true;
+            _playerRb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
+            _canJump = false;
         }
-        else
-        {
-            _jump = false;
-        }
+        _lastPosY = _currentPosY;
+        _currentPosY = _playerRb.position.y;
     }
 
     private void FixedUpdate()
     {
-        if (_left && _right)
+        if (!_canJump && _currentPosY == _lastPosY)
+        {
+            _canJump = true;
+        }
+        if (_isMovingLeft && _isMovingRight)
         {
             _playerRb.velocity = new Vector2(0, _playerRb.velocity.y);
         }
-        else if (_left)
+        else if (_isMovingLeft)
         {
             if (_playerRb.velocity.x - _acceleration >= -_maxSpeed)
             {
-                _playerRb.velocity = new Vector2(_playerRb.velocity.x - _acceleration, 0);
+                _playerRb.velocity = new Vector2(_playerRb.velocity.x - _acceleration, _playerRb.velocity.y);
             }
         }
-        else if (_right)
+        else if (_isMovingRight)
         {
             if (_playerRb.velocity.x + _acceleration <= _maxSpeed)
             {
-                _playerRb.velocity = new Vector2(_playerRb.velocity.x + _acceleration, 0);
+                _playerRb.velocity = new Vector2(_playerRb.velocity.x + _acceleration, _playerRb.velocity.y);
             }
         }
         else
