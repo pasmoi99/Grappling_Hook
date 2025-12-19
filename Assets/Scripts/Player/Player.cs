@@ -17,15 +17,14 @@ public class Player : MonoBehaviour
     [SerializeField] private float _jumpTimerMax;
     [SerializeField] private float _maxSpeed;
     [SerializeField] private float _acceleration;
-    void Awake()
-    {
-        _playerRb = GetComponent<Rigidbody2D>();
-    }
+    
+
+    
 
     private void Start()
     {
         _currentPosY = transform.position.y;
-
+        _playerRb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
