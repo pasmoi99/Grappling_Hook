@@ -5,7 +5,9 @@ using UnityEngine;
 public class MainGame : MonoBehaviour
 {
     public static MainGame Main;
-    public Player player;
+    public Player PlayerChara;
+    public Aim TargetAim;
+    public GameObject Rope;
     void Awake()
     {
         Main = this;
