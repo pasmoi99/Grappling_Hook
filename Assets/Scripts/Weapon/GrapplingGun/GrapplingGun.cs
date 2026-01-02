@@ -15,7 +15,7 @@ public class GrapplingGun : MoveAroundPlayer
     private float _ropeSegmentBaseYSize;
     private float _ropeSegmentCurrentYSize;
 
-    private Queue<GameObject> _ropeQueueElements;
+    private Stack<GameObject> _ropeStackElements;
 
     [SerializeField] private float _ropeLaunchTimer;
 
@@ -52,7 +52,7 @@ public class GrapplingGun : MoveAroundPlayer
         
         _ropeSegmentBaseYSize = MainGame.Main.Rope.GetComponent<SpriteRenderer>().sprite.bounds.size.y;
         _ropeSegmentCurrentYSize = _ropeSegmentBaseYSize * MainGame.Main.Rope.transform.localScale.y;
-        _ropeQueueElements = new Queue<GameObject>();
+        _ropeStackElements = new Stack<GameObject>();
         _mouse0Held = false;
         _isRopePresent = false;
         _hasCoroutineStarted = false;
@@ -76,7 +76,7 @@ public class GrapplingGun : MoveAroundPlayer
         if (_mouse0Held && !_isRopePresent && !_hasCoroutineStarted)
         {
             //LockPosition(true);
-            StartCoroutine(SpawnRope(transform.position));
+            StartCoroutine(SpawnRope(Vector3.up * _ropeSegmentCurrentYSize, _target.transform.position));
             _hasCoroutineStarted = true;
 
         }
@@ -86,11 +86,11 @@ public class GrapplingGun : MoveAroundPlayer
             _hasCoroutineStarted = true;
         }
     }
-    private IEnumerator SpawnRope(Vector3 CurrentPos,float totalDistance=0)
+    private IEnumerator SpawnRope(Vector3 currentPos, Vector3 targetPos, float totalDistance=0)
     {
         if (totalDistance >= Mathf.Sqrt(
-            Mathf.Pow(_target.transform.position.x - transform.position.x, 2) +
-            Mathf.Pow(_target.transform.position.y - transform.position.y, 2)) || _hook.CheckIfCorrectWallIsHit())
+            Mathf.Pow(targetPos.x - transform.position.x, 2) +
+            Mathf.Pow(targetPos.y - transform.position.y, 2)) || _hook.CheckIfCorrectWallIsHit())
         {
             _isRopePresent = true;
 
@@ -113,43 +113,49 @@ public class GrapplingGun : MoveAroundPlayer
         else
         {
 
-            Vector3 ropeDirection = (_target.transform.position - CurrentPos).normalized;
+            Vector3 ropeDirection = (targetPos - transform.position).normalized;
 
-            _hook.transform.position += ropeDirection * _ropeSegmentCurrentYSize;
+            _hook.transform.localPosition += Vector3.up * _ropeSegmentCurrentYSize;
 
-            GameObject obj = Instantiate(MainGame.Main.Rope, CurrentPos + (ropeDirection * _ropeSegmentCurrentYSize),
-                Quaternion.LookRotation(Vector3.forward, ropeDirection), _ropeContainerTransform.transform);
+            InstantiateParameters p = new InstantiateParameters();
+            p.parent = _ropeContainerTransform;
+            p.worldSpace = false;
 
-            _ropeQueueElements.Enqueue(obj);
+            GameObject obj = Instantiate<GameObject>(MainGame.Main.Rope, currentPos - (Vector3.up * _ropeSegmentCurrentYSize),
+                Quaternion.identity,p );
 
-            CurrentPos = obj.transform.position;
+            _ropeStackElements.Push(obj);
+
+            currentPos = obj.transform.localPosition;
+
+            _ropeContainerTransform.localPosition += Vector3.up * _ropeSegmentCurrentYSize;
 
             totalDistance += _ropeSegmentCurrentYSize;
 
             yield return new WaitForSeconds(_ropeLaunchTimer);
 
-            StartCoroutine(SpawnRope(CurrentPos,totalDistance));
+            StartCoroutine(SpawnRope(currentPos,targetPos,totalDistance));
             yield break;
         }
     }
 
     private IEnumerator DespawnRope()
     {
-        _ropeQueueElements.TrimExcess();
+        _ropeStackElements.TrimExcess();
         
-        int size = _ropeQueueElements.Count;
+        int size = _ropeStackElements.Count;
 
-        Vector3 ropeDirection = (transform.position - _hook.transform.position).normalized;
+        //Vector3 ropeDirection = (transform.position - _hook.transform.position).normalized;
 
         for (int i = 0;i<size; i++)
         {
-            _ropeContainerTransform.position += ropeDirection * _ropeSegmentCurrentYSize;
+            _ropeContainerTransform.localPosition += Vector3.down * _ropeSegmentCurrentYSize;
 
-            _hook.transform.position += ropeDirection * _ropeSegmentCurrentYSize;
+            _hook.transform.localPosition += Vector3.down * _ropeSegmentCurrentYSize;
 
-            Destroy(_ropeQueueElements.Peek());
+            Destroy(_ropeStackElements.Peek());
 
-            _ropeQueueElements.Dequeue();
+            _ropeStackElements.Pop();
 
             yield return new WaitForSeconds(_ropeLaunchTimer);
         }

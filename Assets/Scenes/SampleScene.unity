@@ -350,7 +350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   p_percentDistanceFromPlayer: 35
-  _ropeLaunchTimer: 0.01
+  _ropeLaunchTimer: 0.005
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
