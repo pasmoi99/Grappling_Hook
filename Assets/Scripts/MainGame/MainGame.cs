@@ -7,7 +7,10 @@ public class MainGame : MonoBehaviour
     public static MainGame Main;
     public Player PlayerChara;
     public Aim TargetAim;
-    public GameObject Rope;
+    public Transform TargetTransform;
+    public GameObject Gun;
+    public RopeSegment Rope;
+    public Sprite RopeSprite;
     void Awake()
     {
         Main = this;

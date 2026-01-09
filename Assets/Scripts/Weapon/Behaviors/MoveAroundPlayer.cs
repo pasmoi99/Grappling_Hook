@@ -4,29 +4,34 @@ using UnityEngine;
 
 public class MoveAroundPlayer : MonoBehaviour
 {
-    protected Player _player;
-    //protected bool _canMoveAroundPlayer;
+    private bool _canMoveAroundPlayer;
 
-    [SerializeField,Range(1,100)] protected float p_percentDistanceFromPlayer;
+    protected Player _player;
+
+    [SerializeField] protected float p_distanceFromPlayer;
 
     protected void Start()
     {
         _player = MainGame.Main.PlayerChara;
-        //_canMoveAroundPlayer = true;
+        _canMoveAroundPlayer = true;
     }
 
-    protected void Update()
-    {
-        //if (_canMoveAroundPlayer)
-        //{
-        Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = _player.transform.position + ((mouse - _player.transform.position).normalized * (p_percentDistanceFromPlayer / 100));
-        //}
+    //protected void Update()
+    //{
+    //    if (_canMoveAroundPlayer)
+    //    {
+    //        //Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    //        Move();
+    //    }
 
+    //}
+
+    protected void LockPosition(bool Lock)
+    {
+        _canMoveAroundPlayer = !Lock;
     }
-
-    public void LockPosition(bool Lock)
+    protected bool GetCanMoveAroundPlayer()
     {
-        //_canMoveAroundPlayer = !Lock;
+        return _canMoveAroundPlayer;
     }
 }

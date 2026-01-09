@@ -25,11 +25,13 @@ public class Player : MonoBehaviour
     {
         _currentPosY = transform.position.y;
         _playerRb = GetComponent<Rigidbody2D>();
+        //MainGame.Main.Gun.transform.position = transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //MainGame.Main.Gun.transform.position = transform.position;
         if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.A))
         {
             _isMovingLeft = true;
@@ -84,4 +86,9 @@ public class Player : MonoBehaviour
             _playerRb.velocity = new Vector2(0, _playerRb.velocity.y);
         }
     }
+
+    public Vector3 GetPlayerRBVelocity()
+    {
+        return _playerRb.velocity;
+    } 
 }
