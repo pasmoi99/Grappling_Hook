@@ -7,14 +7,17 @@ public class GrapplingHook : MonoBehaviour
 {
     private float _ySizeHook;
     private GameObject _lastHitGameObject;
-    private Vector3 _localUp;
+    //private Vector3 _localUp;
+    private Vector3 _lastPosition;
+    [SerializeField] private LayerMask _wall;
     //private float _ySizeRopeSegment;
 
     private void Start()
     {
         _ySizeHook = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y;
         _lastHitGameObject = null;
-        _localUp = transform.InverseTransformPoint(Vector3.up);
+        _lastPosition = transform.position;
+        //_localUp = transform.InverseTransformPoint(Vector3.up);
     }
 
     //private void OnDrawGizmos()
@@ -22,10 +25,9 @@ public class GrapplingHook : MonoBehaviour
     //    Gizmos.color = Color.red;
     //    Gizmos.DrawLine(transform.position, (MainGame.Main.TargetTransform.position - transform.position).normalized * _ySizeHook);
     //}
-    public bool CheckIfAnyWallIsHit()
+    public bool CheckIfAnyWallIsHit(Vector3 direction)
     {
-        Vector3 direction = (MainGame.Main.TargetAim.transform.position - transform.position).normalized;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, _ySizeHook);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0,_wall);
         if (hit.collider != null)
         {
             _lastHitGameObject = hit.collider.gameObject;
@@ -46,10 +48,20 @@ public class GrapplingHook : MonoBehaviour
         }
         else
         {
+            _lastPosition = transform.position;
             return true;
         }
 
     }
     
+    public void StopMovement()
+    {
+        transform.position = _lastPosition;
+    }
 
+
+    public void ResetPosition()
+    {
+        transform.localPosition = Vector3.zero;
+    }
 }

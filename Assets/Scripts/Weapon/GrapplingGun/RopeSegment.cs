@@ -12,7 +12,7 @@ public class RopeSegment : MonoBehaviour
     {
         _segmentBaseSize = GetComponent<SpriteRenderer>().sprite.bounds.size.y;
         _segmentRealSize = _segmentBaseSize * transform.localScale.y;
-        //_joint = GetComponent<HingeJoint2D>();
+        _joint = GetComponent<HingeJoint2D>();
     }
 
     //public void ConnectToPreviousGameObject(Vector2 anchorPosition, GameObject ObjectToConnectTo)

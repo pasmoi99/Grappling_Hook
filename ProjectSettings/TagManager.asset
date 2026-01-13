@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Hook
   - RopeContainer
+  - Anchor
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
   - 

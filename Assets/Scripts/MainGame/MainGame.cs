@@ -8,7 +8,6 @@ public class MainGame : MonoBehaviour
     public Player PlayerChara;
     public Aim TargetAim;
     public Transform TargetTransform;
-    public GameObject Gun;
     public RopeSegment Rope;
     public Sprite RopeSprite;
     void Awake()
