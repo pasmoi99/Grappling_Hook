@@ -118,15 +118,21 @@ public class GrapplingGun : MoveAroundPlayer
             _hook.StopMovement();
         }
 
-        if (GetCanMoveAroundPlayer())
+        //Debug.Log("test " + _isRopePresent);
+        if (GetCanMoveAroundPlayer() && !_isRopePresent)
         {
             _lastTargetWorldPos = _target.transform.position;
 
             Move(_lastTargetWorldPos);
         }
-        else
+        else if(_isRopePresent && !_lockHookPosition)
         {
+            //Debug.Log(_isRopePresent);
             Move(_lastTargetWorldPos);
+        }
+        else if (_lockHookPosition)
+        {
+            Move(_hook.transform.position);
         }
     }
 
@@ -134,8 +140,9 @@ public class GrapplingGun : MoveAroundPlayer
     {
         if (_ropeCanSpawn && _mouse0Held && !_isRopePresent && !_hasCoroutineSpawnRopeStarted)
         {
+            _isRopePresent = true;
             _hasCoroutineSpawnRopeStarted = true;
-            StartCoroutine(SpawnRope(Vector3.up * _ropeSegmentRealYSize, _target.transform.position, true));
+            StartCoroutine(SpawnRope(Vector3.up * _ropeSegmentRealYSize, _lastTargetWorldPos, true));
             _ropeCanSpawn = false;
             LockPosition(true);
         }
@@ -146,15 +153,16 @@ public class GrapplingGun : MoveAroundPlayer
             _hasCoroutineDespawnRopeStarted = true;
             StartCoroutine(DespawnRope());
             _ropeCanSpawn = false;
-            LockPosition(false);
+            LockPosition(true);
         }
 
         else if (!_mouse0Held && _isRopePresent && !_hasCoroutineDespawnRopeStarted)
         {
             _hasCoroutineDespawnRopeStarted = true;
             StartCoroutine(DespawnRope());
-            _ropeCanSpawn = true;
-            LockPosition(false);
+            _ropeCanSpawn = false;
+            LockPosition(true);
+            
         }
         else if (!_mouse0Held)
         {
@@ -171,13 +179,13 @@ public class GrapplingGun : MoveAroundPlayer
 
     private IEnumerator SpawnRope(Vector3 currentPos, Vector3 targetPos, bool isStarting)
     {
-        if (_distanceFromHook >= Mathf.Sqrt(
+        if (!_mouse0Held
+            ||_distanceFromHook >= Mathf.Sqrt(
             Mathf.Pow(targetPos.x - transform.position.x, 2) +
             Mathf.Pow(targetPos.y - transform.position.y, 2))
             || _hook.CheckIfAnyWallIsHit((targetPos - _hook.transform.position).normalized)
             || _distanceFromHook >= _ropeMaxDistance)
         {
-            _isRopePresent = true;
 
             if (_hook.CheckIfCorrectWallIsHit())
             {
@@ -279,14 +287,12 @@ public class GrapplingGun : MoveAroundPlayer
 
         _ropeContainerTransform.localPosition = Vector3.zero;
 
-        _isRopePresent = false;
 
         _hook.ResetPosition();
 
         //_hasCoroutineDespawnRopeStarted = false;
         _hasCoroutineSpawnRopeStarted = false;
-
-        LockPosition(false);
+        _isRopePresent = false;
         yield break;
     }
 
