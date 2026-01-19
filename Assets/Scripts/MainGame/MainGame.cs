@@ -10,6 +10,8 @@ public class MainGame : MonoBehaviour
     public Transform TargetTransform;
     public RopeSegment Rope;
     public Sprite RopeSprite;
+    public LayerMask WallMask;
+
     void Awake()
     {
         Main = this;

@@ -221,9 +221,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 831c7a26cce10d04e81f6e533a810db6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wall:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!50 &32858638
 Rigidbody2D:
   serializedVersion: 4
@@ -676,6 +673,7 @@ GameObject:
   - component: {fileID: 1077418081}
   - component: {fileID: 1077418080}
   - component: {fileID: 1077418079}
+  - component: {fileID: 1077418082}
   m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
@@ -795,6 +793,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1077418082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1077418078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7a1dc238ce61164c89c62fa62346dff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _canClingToThis: 0
 --- !u!1 &1678168891
 GameObject:
   m_ObjectHideFlags: 0
@@ -829,6 +840,9 @@ MonoBehaviour:
   TargetTransform: {fileID: 1873367900}
   Rope: {fileID: 7981636383101520659, guid: 33657741fca92264a8d26392ee12d4eb, type: 3}
   RopeSprite: {fileID: 21300000, guid: cc8df4e697f709748a5a21377cf2c0e9, type: 3}
+  WallMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!4 &1678168893
 Transform:
   m_ObjectHideFlags: 0
@@ -1050,8 +1064,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _jumpForce: 5
-  _jumpTimerTrue: 0
-  _jumpTimerMax: 0
+  _radiusGroundDetection: 0.05
   _maxSpeed: 2.5
   _acceleration: 0.25
 --- !u!232 &1852434731

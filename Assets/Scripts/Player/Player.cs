@@ -7,23 +7,45 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     private bool _isMovingLeft;
     private bool _isMovingRight;
-    private bool _canJump=true;
+    private bool _isJumping;
+    private bool _canJump;
+
     private float _lastPosY;
     private float _currentPosY;
+    private float _playerSpriteSizeY;
+
+    private LayerMask _wall;
+
+    private Vector2 _playerSpriteCenter;
+    private Vector2 _playerSpriteBottomLeft;
+    private Vector2 _playerSpriteBottomCenter;
+
+    private RaycastHit2D _hit;
+
     private Rigidbody2D _playerRb;
 
     [SerializeField] private float _jumpForce;
-    [SerializeField] private float _jumpTimerTrue;
-    [SerializeField] private float _jumpTimerMax;
+    [SerializeField] private float _radiusGroundDetection;
+    //[SerializeField] private float _jumpTimerTrue;
+    //[SerializeField] private float _jumpTimerMax;
     [SerializeField] private float _maxSpeed;
     [SerializeField] private float _acceleration;
-    
-
-    
 
     private void Start()
     {
-        _currentPosY = transform.position.y;
+        _isMovingLeft = false;
+        _isMovingRight = false;
+        _isJumping = false;
+        _canJump = true;
+
+        _playerSpriteSizeY = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y;
+
+        _wall = MainGame.Main.WallMask;
+
+        _playerSpriteCenter = GetComponent<SpriteRenderer>().bounds.center;
+        _playerSpriteBottomLeft = GetComponent<SpriteRenderer>().bounds.min;
+        _playerSpriteBottomCenter = new Vector2(_playerSpriteCenter.x, _playerSpriteBottomLeft.y);
+        
         _playerRb = GetComponent<Rigidbody2D>();
         //MainGame.Main.Gun.transform.position = transform.position;
     }
@@ -31,6 +53,9 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        _playerSpriteCenter = GetComponent<SpriteRenderer>().bounds.center;
+        _playerSpriteBottomLeft = GetComponent<SpriteRenderer>().bounds.min;
+        _playerSpriteBottomCenter = new Vector2(_playerSpriteCenter.x, _playerSpriteBottomLeft.y);
         //MainGame.Main.Gun.transform.position = transform.position;
         if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.A))
         {
@@ -48,21 +73,30 @@ public class Player : MonoBehaviour
         {
             _isMovingRight = false;
         }
-        if ((Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W)) && _canJump)
-        {
-            _playerRb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
-            _canJump = false;
-        }
-        _lastPosY = _currentPosY;
-        _currentPosY = _playerRb.position.y;
-    }
 
-    private void FixedUpdate()
-    {
-        if (!_canJump && _currentPosY == _lastPosY)
+        //_lastPosY = _currentPosY;
+        //_currentPosY = _playerRb.position.y;
+
+        //Physics2D.OverlapCircle(transform.position - new Vector3(transform.position.x, _playerSpriteSizeY / 2),_radiusGroundDetection);
+
+        if (Physics2D.OverlapCircle(_playerSpriteBottomCenter, _radiusGroundDetection,_wall) != null)
         {
             _canJump = true;
         }
+        if ((Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W)) && _canJump)
+        {
+            _isJumping = true;
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        //Vector3 vect = new Vector3(transform.position.x, Bounds.);
+        Gizmos.DrawSphere(_playerSpriteBottomCenter,_radiusGroundDetection);
+    }
+    private void FixedUpdate()
+    {
+       
         if (_isMovingLeft && _isMovingRight)
         {
             _playerRb.velocity = new Vector2(0, _playerRb.velocity.y);
@@ -84,6 +118,13 @@ public class Player : MonoBehaviour
         else
         {
             _playerRb.velocity = new Vector2(0, _playerRb.velocity.y);
+        }
+
+        if (_isJumping)
+        {
+            _isJumping = false;
+            _playerRb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
+            _canJump = false;
         }
     }
 

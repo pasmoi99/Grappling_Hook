@@ -9,7 +9,7 @@ public class GrapplingHook : MonoBehaviour
     private GameObject _lastHitGameObject;
     //private Vector3 _localUp;
     private Vector3 _lastPosition;
-    [SerializeField] private LayerMask _wall;
+    private LayerMask _wall;
     //private float _ySizeRopeSegment;
 
     private void Start()
@@ -17,6 +17,7 @@ public class GrapplingHook : MonoBehaviour
         _ySizeHook = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y;
         _lastHitGameObject = null;
         _lastPosition = transform.position;
+        _wall = MainGame.Main.WallMask;
         //_localUp = transform.InverseTransformPoint(Vector3.up);
     }
 

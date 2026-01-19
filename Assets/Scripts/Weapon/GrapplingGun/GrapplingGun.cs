@@ -6,9 +6,6 @@ public class GrapplingGun : MoveAroundPlayer
 {
     private Stack<RopeSegment> _ropeStackElements;
 
-    //private Rigidbody2D _grapplingGunRB;
-
-    //private HingeJoint2D _hingeJoint;
     private DistanceJoint2D _distanceJointChara;
 
     private Aim _target;
@@ -16,10 +13,6 @@ public class GrapplingGun : MoveAroundPlayer
     private Transform _ropeContainerTransform;
 
     private GrapplingHook _hook;
-
-    //private GameObject _anchor;
-
-    //private GameObject _objectToConnectTo;
 
     private Vector3 _lastTargetWorldPos;
 
@@ -47,11 +40,6 @@ public class GrapplingGun : MoveAroundPlayer
 
         _ropeStackElements = new Stack<RopeSegment>();
 
-        //_grapplingGunRB = GetComponent<Rigidbody2D>();
-
-        //_hingeJoint = GetComponent<HingeJoint2D>();
-        //_hingeJoint.enabled = false;
-
         _distanceJointChara = MainGame.Main.PlayerChara.GetComponent<DistanceJoint2D>();
         _distanceJointChara.enabled = false;
 
@@ -74,10 +62,6 @@ public class GrapplingGun : MoveAroundPlayer
                 break;
             }
         }
-
-        //_anchor = _ropeContainerTransform.GetChild(0).gameObject;
-
-        //_objectToConnectTo = _anchor;
 
         _lastTargetWorldPos = _target.transform.position;
 
@@ -118,16 +102,14 @@ public class GrapplingGun : MoveAroundPlayer
             _hook.StopMovement();
         }
 
-        //Debug.Log("test " + _isRopePresent);
         if (GetCanMoveAroundPlayer() && !_isRopePresent)
         {
             _lastTargetWorldPos = _target.transform.position;
 
             Move(_lastTargetWorldPos);
         }
-        else if(_isRopePresent && !_lockHookPosition)
+        else if(!_lockHookPosition)
         {
-            //Debug.Log(_isRopePresent);
             Move(_lastTargetWorldPos);
         }
         else if (_lockHookPosition)
@@ -142,7 +124,7 @@ public class GrapplingGun : MoveAroundPlayer
         {
             _isRopePresent = true;
             _hasCoroutineSpawnRopeStarted = true;
-            StartCoroutine(SpawnRope(Vector3.up * _ropeSegmentRealYSize, _lastTargetWorldPos, true));
+            StartCoroutine(SpawnRope(Vector3.up * _ropeSegmentRealYSize, _lastTargetWorldPos));
             _ropeCanSpawn = false;
             LockPosition(true);
         }
@@ -177,7 +159,7 @@ public class GrapplingGun : MoveAroundPlayer
         transform.rotation = Quaternion.LookRotation(Vector3.forward, (transform.position - _player.transform.position).normalized);
     }
 
-    private IEnumerator SpawnRope(Vector3 currentPos, Vector3 targetPos, bool isStarting)
+    private IEnumerator SpawnRope(Vector3 currentPos, Vector3 targetPos)
     {
         if (!_mouse0Held
             ||_distanceFromHook >= Mathf.Sqrt(
@@ -196,15 +178,9 @@ public class GrapplingGun : MoveAroundPlayer
                 _ropeMustComeBack = true;
             }
 
-
-            //_hingeJoint.connectedAnchor = new Vector2(0, -_ropeSegmentRealYSize);
-            //_hingeJoint.connectedBody = _objectToConnectTo.GetComponent<Rigidbody2D>();
-            //_hingeJoint.enabled = true;
-
             _distanceJointChara.enabled = true;
 
             _hasCoroutineDespawnRopeStarted = false;
-            //_hasCoroutineSpawnRopeStarted = false;
 
             yield break;
 
@@ -221,24 +197,6 @@ public class GrapplingGun : MoveAroundPlayer
 
             _ropeStackElements.Push(segment);
 
-            //if (isStarting)
-            //{
-            //    //Debug.Log(segment.GetComponent<HingeJoint2D>().enabled);
-            //    segment.GetComponent<HingeJoint2D>().connectedAnchor = Vector2.zero;
-            //    segment.GetComponent<HingeJoint2D>().connectedBody = _objectToConnectTo.GetComponent<Rigidbody2D>();
-            //    segment.GetComponent<HingeJoint2D>().autoConfigureConnectedAnchor = false;
-            //    segment.GetComponent<HingeJoint2D>().enabled = true;
-            //}
-            //else
-            //{
-            //    segment.GetComponent<HingeJoint2D>().connectedAnchor = new Vector2(0, -_ropeSegmentRealYSize);
-            //    segment.GetComponent<HingeJoint2D>().connectedBody = _objectToConnectTo.GetComponent<Rigidbody2D>();
-            //    segment.GetComponent<HingeJoint2D>().autoConfigureConnectedAnchor = true;
-            //    segment.GetComponent<HingeJoint2D>().enabled = true;
-            //}
-
-            //_objectToConnectTo = segment.gameObject;
-
             currentPos = segment.transform.localPosition;
 
             _distanceJointChara.distance += _ropeSegmentRealYSize;
@@ -247,7 +205,7 @@ public class GrapplingGun : MoveAroundPlayer
 
             yield return new WaitForSeconds(_ropeLaunchTimer);
 
-            StartCoroutine(SpawnRope(currentPos, targetPos, false));
+            StartCoroutine(SpawnRope(currentPos, targetPos));
             yield break;
         }
     }
@@ -258,11 +216,6 @@ public class GrapplingGun : MoveAroundPlayer
         _lockHookPosition = false;
 
         _distanceJointChara.enabled = false;
-
-        //_objectToConnectTo = _hook.gameObject;
-
-        //_hingeJoint.enabled = false;
-        //_hingeJoint.connectedBody = null;
 
         _ropeStackElements.TrimExcess();
 
@@ -290,7 +243,6 @@ public class GrapplingGun : MoveAroundPlayer
 
         _hook.ResetPosition();
 
-        //_hasCoroutineDespawnRopeStarted = false;
         _hasCoroutineSpawnRopeStarted = false;
         _isRopePresent = false;
         yield break;
