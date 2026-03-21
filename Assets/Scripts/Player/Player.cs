@@ -47,16 +47,13 @@ public class Player : MonoBehaviour
         _playerSpriteBottomCenter = new Vector2(_playerSpriteCenter.x, _playerSpriteBottomLeft.y);
         
         _playerRb = GetComponent<Rigidbody2D>();
-        //MainGame.Main.Gun.transform.position = transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
         _playerSpriteCenter = GetComponent<SpriteRenderer>().bounds.center;
         _playerSpriteBottomLeft = GetComponent<SpriteRenderer>().bounds.min;
         _playerSpriteBottomCenter = new Vector2(_playerSpriteCenter.x, _playerSpriteBottomLeft.y);
-        //MainGame.Main.Gun.transform.position = transform.position;
         if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.A))
         {
             _isMovingLeft = true;
@@ -88,12 +85,11 @@ public class Player : MonoBehaviour
             _isJumping = true;
         }
     }
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        //Vector3 vect = new Vector3(transform.position.x, Bounds.);
-        Gizmos.DrawSphere(_playerSpriteBottomCenter,_radiusGroundDetection);
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawSphere(_playerSpriteBottomCenter,_radiusGroundDetection);
+    //}
     private void FixedUpdate()
     {
        

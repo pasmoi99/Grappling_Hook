@@ -36,6 +36,7 @@ public class GrapplingHook : MonoBehaviour
         }
         else
         {  
+            _lastHitGameObject = null;
             return false;
         }
     }
