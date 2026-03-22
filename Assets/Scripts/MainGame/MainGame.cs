@@ -11,6 +11,9 @@ public class MainGame : MonoBehaviour
     public RopeSegment Rope;
     public Sprite RopeSprite;
     public LayerMask WallMask;
+    public Smoke HookSmoke;
+    public Smoke WalkSmokeLeft;
+    public Smoke WalkSmokeRight;
 
     void Awake()
     {

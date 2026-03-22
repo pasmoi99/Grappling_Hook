@@ -5,16 +5,20 @@ using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour
 {
-    private float _ySizeHook;
+    //private float _ySizeHook;
+
     private GameObject _lastHitGameObject;
-    //private Vector3 _localUp;
+
     private Vector3 _lastPosition;
+
     private LayerMask _wall;
+
+    [SerializeField] private List<Sprite> _smoke;
     //private float _ySizeRopeSegment;
 
     private void Start()
     {
-        _ySizeHook = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y;
+        //_ySizeHook = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y;
         _lastHitGameObject = null;
         _lastPosition = transform.position;
         _wall = MainGame.Main.WallMask;
@@ -51,6 +55,7 @@ public class GrapplingHook : MonoBehaviour
         else
         {
             _lastPosition = transform.position;
+            Instantiate(MainGame.Main.HookSmoke,transform.position,Quaternion.identity);
             return true;
         }
 

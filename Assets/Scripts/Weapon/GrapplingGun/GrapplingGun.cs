@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GrapplingGun : MoveAroundPlayer
 {
+    public float TEMP;
+
     private Stack<RopeSegment> _ropeStackElements;
 
     private DistanceJoint2D _distanceJointChara;
@@ -22,9 +24,6 @@ public class GrapplingGun : MoveAroundPlayer
 
     private InstantiateParameters _ropeInstantiateParameters;
 
-    [SerializeField] private float _ropeLaunchTimer;
-    [SerializeField] private float _ropeMaxDistance;
-
     private bool _isRopePresent;
     private bool _mouse0Held;
     private bool _hasCoroutineSpawnRopeStarted;
@@ -33,6 +32,8 @@ public class GrapplingGun : MoveAroundPlayer
     private bool _ropeMustComeBack;
     private bool _ropeCanSpawn;
 
+    [SerializeField] private float _ropeLaunchTimer;
+    [SerializeField] private float _ropeMaxDistance;
 
     new protected void Start()
     {
@@ -124,7 +125,7 @@ public class GrapplingGun : MoveAroundPlayer
         {
             _isRopePresent = true;
             _hasCoroutineSpawnRopeStarted = true;
-            StartCoroutine(SpawnRope(Vector3.up * _ropeSegmentRealYSize, _lastTargetWorldPos));
+            StartCoroutine(SpawnRope(Vector3.right * _ropeSegmentRealYSize, _lastTargetWorldPos));
             _ropeCanSpawn = false;
             LockPosition(true);
         }
@@ -156,7 +157,13 @@ public class GrapplingGun : MoveAroundPlayer
     protected void Move(Vector3 target)
     {
         transform.position = _player.transform.position + ((target - _player.transform.position).normalized * p_distanceFromPlayer);
-        transform.rotation = Quaternion.LookRotation(Vector3.forward, (transform.position - _player.transform.position).normalized);
+        //if ()
+        //{
+
+        //}
+        transform.right = target - transform.position;
+        Debug.Log(transform.right);
+        /*transform.rotation = Quaternion.LookRotation(Vector3.forward, (transform.position - _player.transform.position).normalized)*/;
     }
 
     private IEnumerator SpawnRope(Vector3 currentPos, Vector3 targetPos)
@@ -188,12 +195,12 @@ public class GrapplingGun : MoveAroundPlayer
         else
         {
 
-            _hook.transform.localPosition += Vector3.up * _ropeSegmentRealYSize;
+            _hook.transform.localPosition += Vector3.right * _ropeSegmentRealYSize;
 
-            RopeSegment segment = Instantiate<RopeSegment>(MainGame.Main.Rope, currentPos - (Vector3.up * _ropeSegmentRealYSize),
-                Quaternion.identity, _ropeInstantiateParameters);
+            RopeSegment segment = Instantiate<RopeSegment>(MainGame.Main.Rope, currentPos - (Vector3.right * _ropeSegmentRealYSize),
+               Quaternion.Euler(0,0,-90) , _ropeInstantiateParameters);
 
-            _ropeContainerTransform.localPosition += Vector3.up * _ropeSegmentRealYSize;
+            _ropeContainerTransform.localPosition += Vector3.right * _ropeSegmentRealYSize;
 
             _ropeStackElements.Push(segment);
 
@@ -223,9 +230,9 @@ public class GrapplingGun : MoveAroundPlayer
 
         for (int i = 0; i < size; i++)
         {
-            _ropeContainerTransform.localPosition += Vector3.down * _ropeSegmentRealYSize;
+            _ropeContainerTransform.localPosition += Vector3.left * _ropeSegmentRealYSize;
 
-            _hook.transform.localPosition += Vector3.down * _ropeSegmentRealYSize;
+            _hook.transform.localPosition += Vector3.left * _ropeSegmentRealYSize;
 
             _distanceFromHook -= _ropeSegmentRealYSize;
 
