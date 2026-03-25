@@ -31,6 +31,9 @@ public class GrapplingGun : MoveAroundPlayer
     private bool _lockHookPosition;
     private bool _ropeMustComeBack;
     private bool _ropeCanSpawn;
+    private bool _canPlayRopeLaunchSound;
+
+    private AudioSource _grapplingGunSource;
 
     [SerializeField] private float _ropeLaunchTimer;
     [SerializeField] private float _ropeMaxDistance;
@@ -81,8 +84,11 @@ public class GrapplingGun : MoveAroundPlayer
         _lockHookPosition = false;
         _ropeMustComeBack = false;
         _ropeCanSpawn = true;
+        _canPlayRopeLaunchSound = false;
 
         _ropeContainerTransform.localPosition = Vector3.zero;
+
+        _grapplingGunSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -123,6 +129,7 @@ public class GrapplingGun : MoveAroundPlayer
     {
         if (_ropeCanSpawn && _mouse0Held && !_isRopePresent && !_hasCoroutineSpawnRopeStarted)
         {
+            _canPlayRopeLaunchSound = true;
             _isRopePresent = true;
             _hasCoroutineSpawnRopeStarted = true;
             StartCoroutine(SpawnRope(Vector3.right * _ropeSegmentRealYSize, _lastTargetWorldPos));
@@ -162,12 +169,16 @@ public class GrapplingGun : MoveAroundPlayer
 
         //}
         transform.right = target - transform.position;
-        Debug.Log(transform.right);
         /*transform.rotation = Quaternion.LookRotation(Vector3.forward, (transform.position - _player.transform.position).normalized)*/;
     }
 
     private IEnumerator SpawnRope(Vector3 currentPos, Vector3 targetPos)
     {
+        if (_canPlayRopeLaunchSound)
+        {
+            _canPlayRopeLaunchSound = false;
+            _grapplingGunSource.PlayOneShot(SoundManager.Sounds.RopeFiring);
+        }
         if (!_mouse0Held
             ||_distanceFromHook >= Mathf.Sqrt(
             Mathf.Pow(targetPos.x - transform.position.x, 2) +
@@ -179,10 +190,12 @@ public class GrapplingGun : MoveAroundPlayer
             if (_hook.CheckIfCorrectWallIsHit())
             {
                 _lockHookPosition = true;
+                _grapplingGunSource.Stop();
             }
             else if (!_hook.CheckIfAnyWallIsHit((targetPos - _hook.transform.position).normalized) || !_hook.CheckIfCorrectWallIsHit())
             {
                 _ropeMustComeBack = true;
+                _grapplingGunSource.Stop();
             }
 
             _distanceJointChara.enabled = true;
@@ -219,7 +232,7 @@ public class GrapplingGun : MoveAroundPlayer
 
     private IEnumerator DespawnRope()
     {
-
+        _grapplingGunSource.PlayOneShot(SoundManager.Sounds.RopeRetracting);
         _lockHookPosition = false;
 
         _distanceJointChara.enabled = false;
@@ -252,6 +265,7 @@ public class GrapplingGun : MoveAroundPlayer
 
         _hasCoroutineSpawnRopeStarted = false;
         _isRopePresent = false;
+        _grapplingGunSource.Stop();
         yield break;
     }
 

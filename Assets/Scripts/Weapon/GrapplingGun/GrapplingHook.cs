@@ -13,23 +13,17 @@ public class GrapplingHook : MonoBehaviour
 
     private LayerMask _wall;
 
-    [SerializeField] private List<Sprite> _smoke;
-    //private float _ySizeRopeSegment;
+    private AudioSource _hookSource;
 
     private void Start()
     {
-        //_ySizeHook = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y;
         _lastHitGameObject = null;
         _lastPosition = transform.position;
         _wall = MainGame.Main.WallMask;
-        //_localUp = transform.InverseTransformPoint(Vector3.up);
+        _hookSource = GetComponent<AudioSource>();
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.red;
-    //    Gizmos.DrawLine(transform.position, (MainGame.Main.TargetTransform.position - transform.position).normalized * _ySizeHook);
-    //}
+    
     public bool CheckIfAnyWallIsHit(Vector3 direction)
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0,_wall);
@@ -48,13 +42,21 @@ public class GrapplingHook : MonoBehaviour
     public bool CheckIfCorrectWallIsHit()
     {
        
-        if (_lastHitGameObject == null || !_lastHitGameObject.TryGetComponent<Wall>(out Wall w) || !w.GetCanClingToThis())
+        if (_lastHitGameObject == null)
         {
+            
+            return false;
+        }
+
+        else if (!_lastHitGameObject.TryGetComponent<Wall>(out Wall w) || !w.GetCanClingToThis())
+        {
+            _hookSource.PlayOneShot(SoundManager.Sounds.HittingClang);
             return false;
         }
         else
         {
             _lastPosition = transform.position;
+            _hookSource.PlayOneShot(SoundManager.Sounds.Latching);
             Instantiate(MainGame.Main.HookSmoke,transform.position,Quaternion.identity);
             return true;
         }

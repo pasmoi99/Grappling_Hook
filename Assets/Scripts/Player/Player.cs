@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     private bool _isJumping;
     private bool _canJump;
     private bool _canSpawnWalkingSmoke;
+    private bool _hasPlayedLandingSound;
+    private bool _canPlayWalkingSound;
 
     private LayerMask _wall;
 
@@ -26,6 +28,8 @@ public class Player : MonoBehaviour
     private Vector2 _playerSpriteBottomCenter;
 
     private Rigidbody2D _playerRb;
+
+    private AudioSource _playerSource;
 
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _radiusGroundDetection;
@@ -57,6 +61,8 @@ public class Player : MonoBehaviour
         _isJumping = false;
         _canJump = true;
         _canSpawnWalkingSmoke = false;
+        _hasPlayedLandingSound = false;
+        _canPlayWalkingSound = false;
 
         //_playerSpriteSizeY = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y;
 
@@ -67,6 +73,8 @@ public class Player : MonoBehaviour
         _playerSpriteBottomCenter = new Vector2(_playerSpriteCenter.x, _playerSpriteBottomLeft.y);
         
         _playerRb = GetComponent<Rigidbody2D>();
+
+        _playerSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -79,30 +87,45 @@ public class Player : MonoBehaviour
         _playerSpriteBottomCenter = new Vector2(_playerSpriteCenter.x, _playerSpriteBottomLeft.y);
         if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.A))
         {
+            if (_canPlayWalkingSound)
+            {
+                PlayStepSound(SoundManager.Sounds.Steps);
+            }
             _isMovingLeft = true;
             _isFacingRight = false;
+            _isMovingRight = false;
         }
-        else
+        else if (Input.GetKey(KeyCode.D))
         {
+            if (_canPlayWalkingSound)
+            {
+                PlayStepSound(SoundManager.Sounds.Steps);
+            }
             _isMovingLeft = false;
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
             _isMovingRight = true;
             _isFacingRight = true;
         }
         else
         {
+            _isMovingLeft = false;
             _isMovingRight = false;
         }
 
-        if (Physics2D.OverlapCircle(_playerSpriteBottomCenter, _radiusGroundDetection,_wall) != null)
+        if (Physics2D.OverlapCircle(_playerSpriteBottomCenter, _radiusGroundDetection, _wall) != null)
         {
+            if (!_hasPlayedLandingSound)
+            {
+                _hasPlayedLandingSound = true;
+                _playerSource.PlayOneShot(SoundManager.Sounds.Landing);
+            }
             _canJump = true;
             _canSpawnWalkingSmoke = true;
+            _canPlayWalkingSound = true;
         }
         else
         {
+            _canPlayWalkingSound = false;
+            _hasPlayedLandingSound = false;
             _canJump = false;
             _canSpawnWalkingSmoke = false;
         }
@@ -195,6 +218,16 @@ public class Player : MonoBehaviour
             _isJumping = false;
             _playerRb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _canJump = false;
+        }
+    }
+
+    private void PlayStepSound(List<AudioClip> Steps)
+    {
+        if (!_playerSource.isPlaying || _playerSource.clip == null)
+        {
+            int rand = Random.Range(0, Steps.Count);
+            _playerSource.clip = Steps[rand];
+            _playerSource.Play();
         }
     }
 

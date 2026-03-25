@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1098620878262315232
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1608136336483959281}
+  - component: {fileID: 4134370541225047038}
+  - component: {fileID: 7291490631176824753}
+  m_Layer: 0
+  m_Name: _Scripts
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1608136336483959281
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098620878262315232}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.271152, y: -2.166749, z: -0.018346172}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4134370541225047038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098620878262315232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a921fe71adefc1544b91ea7493578700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerChara: {fileID: 0}
+  TargetAim: {fileID: 0}
+  TargetTransform: {fileID: 0}
+  Rope: {fileID: 7981636383101520659, guid: 33657741fca92264a8d26392ee12d4eb, type: 3}
+  RopeSprite: {fileID: 21300000, guid: cc8df4e697f709748a5a21377cf2c0e9, type: 3}
+  WallMask:
+    serializedVersion: 2
+    m_Bits: 8
+  HookSmoke: {fileID: 3084512897950303839, guid: 0526b4bfb20e845458ce0eaf9a02de4b, type: 3}
+  WalkSmokeLeft: {fileID: 1275868481203774272, guid: b96bc5cd5d2dc01428ef81f3bdd97fe4, type: 3}
+  WalkSmokeRight: {fileID: 1275868481203774272, guid: 5e72079364d260c4eacbedc58ac9d609, type: 3}
+--- !u!114 &7291490631176824753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098620878262315232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c7776c471891bd4ab1254eeee6fd6c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Latching: {fileID: 0}
+  HittingClang: {fileID: 0}
+  RopeFiring: {fileID: 0}
+  RopeRetracting: {fileID: 0}
+  Steps: []
+  Landing: {fileID: 0}
