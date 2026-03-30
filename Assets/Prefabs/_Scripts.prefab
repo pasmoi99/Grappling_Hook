@@ -68,9 +68,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c7776c471891bd4ab1254eeee6fd6c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Latching: {fileID: 0}
-  HittingClang: {fileID: 0}
-  RopeFiring: {fileID: 0}
-  RopeRetracting: {fileID: 0}
-  Steps: []
-  Landing: {fileID: 0}
+  Latching: {fileID: 8300000, guid: f36dd750cf02b0046be5521c147db668, type: 3}
+  HittingClang: {fileID: 8300000, guid: 390bd64b6b247e74e9f2eabc6f51e605, type: 3}
+  RopeFiring: {fileID: 8300000, guid: 776afce45d39be0419d179dd66b4fe4a, type: 3}
+  RopeRetracting: {fileID: 8300000, guid: d25d428dbc927fa40b713c4e91125cf1, type: 3}
+  Steps:
+  - {fileID: 8300000, guid: 3d6b5ce6c19e06e4b9b1ccf5ab589866, type: 3}
+  - {fileID: 8300000, guid: 3d12f28a939992b4ebfa4d1029081ea7, type: 3}
+  - {fileID: 8300000, guid: 5dd55a52dd678d94fa05adf4d910f654, type: 3}
+  Landing: {fileID: 8300000, guid: b9eff4d4d1dcfb24ea21aeae83e739c8, type: 3}

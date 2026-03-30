@@ -9,24 +9,43 @@ public class GrapplingHook : MonoBehaviour
 
     private GameObject _lastHitGameObject;
 
+    private Collider2D _collider;
+
     private Vector3 _lastPosition;
 
     private LayerMask _wall;
 
     private AudioSource _hookSource;
 
+    //[SerializeField] private float _distanceRaycastHook;
+
     private void Start()
     {
         _lastHitGameObject = null;
+        
+        _collider = GetComponent<Collider2D>();
+        _collider.enabled = false;
+
         _lastPosition = transform.position;
+        
         _wall = MainGame.Main.WallMask;
+        
         _hookSource = GetComponent<AudioSource>();
     }
 
-    
+    //private void OnDrawGizmos()
+    //{
+        
+    //}
+
     public bool CheckIfAnyWallIsHit(Vector3 direction)
     {
+        _collider.enabled = true;
+
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0,_wall);
+
+        _collider.enabled = false;
+
         if (hit.collider != null)
         {
             _lastHitGameObject = hit.collider.gameObject;
