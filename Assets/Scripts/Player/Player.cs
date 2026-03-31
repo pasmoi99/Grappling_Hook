@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     private float _timerAnimation;
     private float _timerSpawnSmoke;
+    private float _previousPlayerPositionY;
 
     private int _currentIdle;
     private int _currentRun;
@@ -18,7 +19,7 @@ public class Player : MonoBehaviour
     private bool _isJumping;
     private bool _canJump;
     private bool _canSpawnWalkingSmoke;
-    private bool _hasPlayedLandingSound;
+    private bool _hasLanded;
     private bool _canPlayWalkingSound;
     private bool _hasSwappedColliderPos;
 
@@ -53,6 +54,7 @@ public class Player : MonoBehaviour
     {
         _timerAnimation = 0;
         _timerSpawnSmoke = 0;
+        _previousPlayerPositionY = transform.position.y;
 
         _currentIdle = 0;
         _currentRun = 0;
@@ -65,11 +67,9 @@ public class Player : MonoBehaviour
         _isJumping = false;
         _canJump = false;
         _canSpawnWalkingSmoke = false;
-        _hasPlayedLandingSound = false;
+        _hasLanded = false;
         _canPlayWalkingSound = false;
         _hasSwappedColliderPos = true;
-
-        //_playerSpriteSizeY = GetComponent<SpriteRenderer>().sprite.bounds.size.y * transform.localScale.y;
 
         _wall = MainGame.Main.WallMask;
 
@@ -94,8 +94,6 @@ public class Player : MonoBehaviour
         _playerSpriteBottomLeft = _playerSprite.bounds.min;
         _playerSpriteBottomRight = new Vector2(_playerSprite.bounds.max.x, _playerSprite.bounds.min.y);
         _playerSpriteBottomCenter = new Vector2(_playerSpriteCenter.x, _playerSpriteBottomLeft.y);
-
-        //Debug.Log(_hasSwappedColliderPos);
 
         if ((Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.A)) && _isFacingRight)
         {
@@ -144,37 +142,25 @@ public class Player : MonoBehaviour
         if (_isFacingRight && Physics2D.OverlapCircle(new Vector2((_playerSpriteBottomCenter.x+_playerSpriteBottomLeft.x)/2, (_playerSpriteBottomCenter.y + _playerSpriteBottomLeft.y) / 2),
             _radiusGroundDetection, _wall) != null)
         {
-            if (!_hasPlayedLandingSound)
-            {
-                _hasPlayedLandingSound = true;
-                _playerSource.PlayOneShot(SoundManager.Sounds.Landing);
-            }
-            _canJump = true;
-            _canSpawnWalkingSmoke = true;
-            _canPlayWalkingSound = true;
+            SetIsOnGround();
         }
         else if (!_isFacingRight && Physics2D.OverlapCircle(new Vector2((_playerSpriteBottomCenter.x + _playerSpriteBottomRight.x) / 2, (_playerSpriteBottomCenter.y + _playerSpriteBottomRight.y) / 2),
             _radiusGroundDetection, _wall) != null)
         {
-            if (!_hasPlayedLandingSound)
-            {
-                _hasPlayedLandingSound = true;
-                _playerSource.PlayOneShot(SoundManager.Sounds.Landing);
-            }
-            _canJump = true;
-            _canSpawnWalkingSmoke = true;
-            _canPlayWalkingSound = true;
+            SetIsOnGround();
         }
-        else
+        else if (Physics2D.OverlapCircle(new Vector2((_playerSpriteBottomCenter.x + _playerSpriteBottomRight.x) / 2, (_playerSpriteBottomCenter.y + _playerSpriteBottomRight.y) / 2),
+            _radiusGroundDetection, _wall) == null)
         {
             _canPlayWalkingSound = false;
-            _hasPlayedLandingSound = false;
+            _hasLanded = false;
             _canJump = false;
             _canSpawnWalkingSmoke = false;
         }
 
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W)) && _canJump)
         {
+            _previousPlayerPositionY = transform.position.y;
             _canJump = false;
             _canSpawnWalkingSmoke = false;
             _isJumping = true;
@@ -228,13 +214,7 @@ public class Player : MonoBehaviour
             _timerAnimation = 0;
         }
     }
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        
-        Gizmos.DrawSphere(_playerSpriteBottomCenter, _radiusGroundDetection);
-        
-    }
+
     private void FixedUpdate()
     {
        
@@ -257,13 +237,33 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (_isJumping )
+        if (_isJumping)
         {
             _isJumping = false;
             _playerRb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _canJump = false;
         }
         
+        if (!_canJump && _previousPlayerPositionY>= transform.position.y)
+        {
+            _playerRb.velocity = new Vector2(_playerRb.velocity.x, _playerRb.velocity.y - _acceleration);
+        }
+    }
+
+    private void SetIsOnGround()
+    {
+        if (!_hasLanded)
+        {
+            _hasLanded = true;
+            _playerSource.PlayOneShot(SoundManager.Sounds.Landing);
+            Instantiate(MainGame.Main.WalkSmokeRight, new Vector3(transform.position.x - _offsetSmokeX,
+                transform.position.y - _offsetSmokeY, transform.position.z), Quaternion.identity);
+            Instantiate(MainGame.Main.WalkSmokeLeft, new Vector3(transform.position.x + _offsetSmokeX,
+                transform.position.y - _offsetSmokeY, transform.position.z), Quaternion.identity);
+        }
+        _canJump = true;
+        _canSpawnWalkingSmoke = true;
+        _canPlayWalkingSound = true;
     }
 
     private void PlayStepSound(List<AudioClip> Steps)
